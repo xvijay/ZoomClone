@@ -1,71 +1,72 @@
-// Gobal
-const videoGrid = document.querySelector("#videoGrid");
-let myStream;
-let myVideo = document.createElement("video"); /// Create a video play
-myVideo.muted = true; /// By default it is muted
-var peer = new Peer(undefined, {
-  path: "/peerjs",
+const videoGrid = document.getElementById("video-grid");
+let x;
+const myPeer = new Peer(undefined, {
   host: "/",
   port: "5000",
+  path: "/peerjs",
 });
-// TO get audio and video access
+const myVideo = document.createElement("video");
+myVideo.muted = true;
+const peers = {};
 navigator.mediaDevices
   .getUserMedia({
     video: true,
     audio: true,
   })
-  .then((res) => {
-    myStream = res;
-    addVideoStream(myVideo, res);
+  .then((stream) => {
+    addVideoStream(myVideo, stream);
+    console.log("in then");
+    x = stream;
+
+    socket.on("user-connected", (userId) => {
+      console.log("connect");
+      console.log("user-connected", userId);
+      connectToNewUser(userId, stream);
+    });
+  });
+myPeer.on("call", (call) => {
+  console.log("answer", x);
+  navigator.mediaDevices
+    .getUserMedia({
+      video: true,
+      audio: true,
+    })
+    .then((stream) => {
+      console.log();
+      call.answer(stream);
+      const video = document.createElement("video");
+      call.on("stream", (userVideoStream) => {
+        addVideoStream(video, userVideoStream);
+      });
+    });
+});
+
+socket.on("user-disconnected", (userId) => {
+  if (peers[userId]) peers[userId].close();
+});
+
+myPeer.on("open", (id) => {
+  socket.emit("join-room", ROOM_ID, id);
+});
+
+function connectToNewUser(userId, stream) {
+  const call = myPeer.call(userId, stream);
+  const video = document.createElement("video");
+  console.log("called");
+  call.on("stream", (userVideoStream) => {
+    addVideoStream(video, userVideoStream);
+  });
+  call.on("close", () => {
+    video.remove();
   });
 
-//   Conections
+  peers[userId] = call;
+}
 
-// Sockect
-socket.on("user-connected", (userId) => {
-  console.log("connected");
-  connectToNewUser(userId, myStream);
-});
-peer.on("open", (id) => {
-  socket.emit("join-room", roomId, id);
-});
-peer.on("call", function (call) {
-  call.answer(myStream);
-  const video = document.createElement("video");
-  console.log(call);
-  call.on("stream", (myStream1) => {
-    console.log("answer");
-    // addVideoStream(video, myStream1);
-    video.srcObject = myStream1;
-    video.muted = true;
-    video.addEventListener("loadedmetadata", () => {
-      video.play();
-    });
-    document.querySelector("#videoGrid2").append(video);
-  });
-});
-
-// Functions
-
-const connectToNewUser = (userId, stream) => {
-  console.log(roomId, "newUser", userId);
-  const call = peer.call(userId, myStream);
-  const video = document.createElement("video");
-  console.log(call);
-  setTimeout(() => {
-    call.on("data", function (remoteStream) {
-      // Show stream in some video/canvas element.
-      console.log(remoteStream);
-    });
-  }, 5000);
-};
-
-// Render Video
-const addVideoStream = (video, stream) => {
+function addVideoStream(video, stream) {
   video.srcObject = stream;
-  video.muted = true;
   video.addEventListener("loadedmetadata", () => {
     video.play();
   });
   videoGrid.append(video);
-};
+}
