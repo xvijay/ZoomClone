@@ -1,0 +1,17 @@
+#videoGrid {
+  /* display: flex;
+  justify-content: center;
+  align-items: center; */
+  /* height: 100vh; */
+  width: 200px;
+  height: 200px;
+}
+#videoGrid2 {
+  width: 100px;
+  height: 100px;
+}
+/* video {
+  width: 300;
+  height: 400px;
+  object-fit: cover;
+} */
