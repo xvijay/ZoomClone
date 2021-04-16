@@ -2,7 +2,7 @@ const videoGrid = document.getElementById("video-grid");
 let x;
 const myPeer = new Peer(undefined, {
   host: "/",
-  port: "5000",
+  port: "443",
   path: "/peerjs",
 });
 const myVideo = document.createElement("video");
