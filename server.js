@@ -19,6 +19,11 @@ app.use("/peerjs", peerServer);
 app.get("/", (req, res) => {
   //   res.status(200).send({ message: "Hello from Server" });
   //   res.send({ message: "Hello from SERVER" });
+  res.send({ message: "add /room in url" });
+});
+app.get("/room", (req, res) => {
+  //   res.status(200).send({ message: "Hello from Server" });
+  //   res.send({ message: "Hello from SERVER" });
   res.redirect(`/${uuidv4()}`);
 });
 
