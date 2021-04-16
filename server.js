@@ -28,8 +28,8 @@ app.get("/room", (req, res) => {
 });
 
 app.get("/:room", (req, res) => {
-  res.send({message:req.params.room});
-//   res.render("room.ejs", { roomId: req.params.room });
+//   res.send({message:req.params.room});
+  res.render("room.ejs", { roomId: req.params.room });
 });
 
 io.on("connection", (socket) => {
