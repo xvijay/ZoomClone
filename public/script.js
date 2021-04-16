@@ -19,8 +19,6 @@ navigator.mediaDevices
     x = stream;
 
     socket.on("user-connected", (userId) => {
-      console.log("connect");
-      console.log("user-connected", userId);
       connectToNewUser(userId, stream);
     });
   });
@@ -71,3 +69,48 @@ function addVideoStream(video, stream) {
   });
   videoGrid.append(video);
 }
+
+let message = document.querySelector("#input-chat");
+let messageBox = document.querySelector("#chat-here");
+let messageArray = ["First"];
+
+socket.on("message-recevied", (text) => {
+  messageArray.push(text);
+  let div = document.createElement("div");
+  div.innerHTML = text;
+  messageBox.append(div);
+});
+
+message.addEventListener("keypress", (e) => {
+  let text = e.charCode === 13 ? message.value : "";
+  text !== "" && sendMessage(text);
+});
+
+const sendMessage = (text) => {
+  socket.emit("message", text);
+  message.value = "";
+};
+let mute = document.querySelector(".mute");
+mute.addEventListener("click", (e) => {
+  let unMute = () => {
+    x.getAudioTracks()[0].enabled = false;
+    mute.innerHTML = "Mute";
+  };
+  let muteV = () => {
+    x.getAudioTracks()[0].enabled = true;
+    mute.innerHTML = "Unmute";
+  };
+  x.getAudioTracks()[0].enabled ? unMute() : muteV();
+});
+let videoControl = document.querySelector(".videoControl");
+videoControl.addEventListener("click", (e) => {
+  let hide = () => {
+    x.getVideoTracks()[0].enabled = false;
+    videoControl.innerHTML = "Show Video";
+  };
+  let unhide = () => {
+    x.getVideoTracks()[0].enabled = true;
+    videoControl.innerHTML = "Hide Video";
+  };
+  x.getVideoTracks()[0].enabled ? hide() : unhide();
+});

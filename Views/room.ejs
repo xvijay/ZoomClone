@@ -37,6 +37,29 @@
   </head>
   <body>
     <div id="video-grid"></div>
-    <div id="videoGrid2"></div>
+    <div
+      id="controls"
+      style="display: flex; height: 300px; width: 100%; border: 1px solid black"
+    >
+      <div class="mute" style="cursor: pointer; width: 10%">Unmute</div>
+
+      <div class="videoControl" style="cursor: pointer">Hide Video</div>
+    </div>
+    <div
+      id="chat"
+      style="
+        display: flex;
+        height: 300px;
+        width: 100%;
+        border: 1px solid black;
+        justify-content: center;
+        align-items: center;
+        overflow: auto;
+      "
+    >
+      <div id="chat-here">Chat Will come here</div>
+      <label for="input-chat"></label>
+      <input id="input-chat" name="input-chat" />
+    </div>
   </body>
 </html>
